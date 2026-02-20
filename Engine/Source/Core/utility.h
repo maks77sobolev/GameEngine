@@ -11,4 +11,5 @@ protected:
     NonCopyable(NonCopyable&& ) = delete;
     NonCopyable operator =( NonCopyable&&) = delete;
 };
+#define PLATFORM_BREAK() (__nop(), __debugbreak());
 }  // namespace LifeExe
