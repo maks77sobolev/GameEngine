@@ -2,4 +2,5 @@
 spdlog/1.16.0
 [generators]
 CMakeDeps
+CMakeConfigDeps
 CMakeToolchain
