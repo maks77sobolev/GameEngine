@@ -32,5 +32,5 @@ set(CMAKE_SUPPRESS_REGENERATION TRUE)
 add_subdirectory(Engine)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT LifeExeEngine)
 
-include(${CMAKE_SOURCE_DIR}/Automation/CMAKE/CMakeHelpers.cmake)
+#include(${CMAKE_SOURCE_DIR}/Automation/CMAKE/CMakeHelpers.cmake)
 system_info()

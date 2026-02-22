@@ -11,7 +11,7 @@ using namespace LifeExe;
 namespace fs = std::filesystem;
 namespace
 {
-const std::unordered_map<LogVerbosity, spdlog::level::level_enum> c_verbocityMap
+const std::unordered_map<LogVerbosity, spdlog::level::level_enum> c_verbosityMap
 {
     {LogVerbosity::NoLogging, spdlog::level::off},
     {LogVerbosity::Display, spdlog::level::info},
@@ -44,14 +44,17 @@ public:
     };
     void log(LogVerbosity verbosity, const std::string& message) const
     {
-        if (verbosity == LogVerbosity::NoLogging) return;
+        const auto spdLevel = c_verbosityMap.at(verbosity);
+        if (verbosity != LogVerbosity::Log && 
+            m_consoleLogger->should_log(spdLevel))
+        {
+            m_consoleLogger->log(spdLevel, message);
+        }
 
-        const auto spdLevelIt = c_verbocityMap.find(verbosity);  // searching through map
-
-        if (spdLevelIt == c_verbocityMap.end()) return;  // if "find" found some key-value pair
-        const auto spdLevel = spdLevelIt->second;
-        if (verbosity != LogVerbosity::Log) m_consoleLogger->log(spdLevel, message);
-        m_fileLogger->log(spdLevel, message);
+        if (m_fileLogger->should_log(spdLevel))
+        {
+            m_fileLogger->log(spdLevel, message);
+        }
 
         if (verbosity == LogVerbosity::Fatal)
         {
@@ -76,11 +79,17 @@ private:
     };
 };
     // interface
-    void Log::log(const LogCategory& category, LogVerbosity verbosity, const std::string& message) const
-    {
-        m_pImpl->log(verbosity, std::format("[{}] {}", category.name(), message));
-    };
+void Log::log(const LogCategory& category, LogVerbosity verbosity, const std::string& message, bool showLocation,
+    const std::source_location location) const
+{
+    const std::string fmtMsg = showLocation
+                                   ? std::format("[{}] [{}:{}] {}", category.name(), location.function_name(), location.line(), message)
+                                   : std::format("[{}] {}", category.name(), message);
 
-    Log::Log() : m_pImpl(std::make_unique<Impl>()) {}
-    Log::~Log() = default;
+    m_pImpl->log(verbosity, fmtMsg);
+}
+LifeExe::Log::Log() : m_pImpl(std::make_unique<Impl>()) {};
+LifeExe::Log::~Log() = default;
+
+
 
