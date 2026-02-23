@@ -1,60 +1,48 @@
 #pragma once
-
-#include <string>
-#include <string_view>
+#include "Core/Utility.h"
 #include <memory>
-#include <source_location>
 #include <concepts>
 #include <format>
-
-#include "Core/Utility.h"
-
+#include <string>
+#include <string_view>
+#include <source_location>
 namespace LifeExe
 {
-
 enum class LogVerbosity : uint8_t
 {
     NoLogging = 0,
     Display,
+    Log,
     Warning,
     Error,
-    Log,
     Fatal
 };
-
 struct LogCategory
 {
-    explicit LogCategory(const std::string& name) : m_name(name) {}
-    std::string name() const { return m_name; }
+    explicit LogCategory(const std::string& name):m_name(name) {}
 
-private:
-    const std::string m_name;
+  std::string  name() const { return m_name; }
+
+private: 
+  std::string  m_name;
 };
 
 class Log final : public NonCopyable
 {
 public:
-    static Log& getInstance()
-    {
-        static Log instance;
+    static Log& GetInstance() 
+    { static Log instance;
         return instance;
     }
-
-    // !! Do not use the direct call; it's unsafe. Use macro version with static checks !!
-    void log(const LogCategory& category,  //
-        LogVerbosity verbosity,            //
-        const std::string& message,        //
-        bool showLocation = false,         //
+    void log(const LogCategory& category, LogVerbosity verbocity, const std::string& message, bool showLocation=false,
         const std::source_location location = std::source_location::current()) const;
 
 private:
     Log();
     ~Log();
-
-    class Impl;
-    std::unique_ptr<Impl> m_pImpl;
+class Impl;
+std::unique_ptr<Impl> m_pImpl;
 };
-
 constexpr LogVerbosity c_minVerbosity = LogVerbosity::Display;
 constexpr LogVerbosity c_maxVerbosity = LogVerbosity::Fatal;
 
@@ -73,14 +61,13 @@ concept ValidVerbosityLevel = V == LogVerbosity::NoLogging   //
                               || V == LogVerbosity::Log      //
                               || V == LogVerbosity::Fatal;
 
-}  // namespace LifeExe
 
-#define DEFINE_LOG_CATEGORY_STATIC(logName)       \
-    namespace                                     \
-    {                                             \
-    const LifeExe::LogCategory logName(#logName); \
+}
+#define DEFINE_LOG_CATEGORY_STATIC(logName)   \
+     namespace                                  \
+    {                                           \
+        LifeExe::LogCategory logName(#logName);\
     }
-
 #define LE_LOG_IMPL(categoryName, verbosity, showLocation, formatStr, ...)                                                        \
     do                                                                                                                            \
     {                                                                                                                             \
@@ -92,7 +79,7 @@ concept ValidVerbosityLevel = V == LogVerbosity::NoLogging   //
             static_assert(LifeExe::ValidLogCategory<decltype(categoryName)>, "Category must be of type LogCategory");             \
             static_assert(                                                                                                        \
                 LifeExe::LoggableMessage<decltype(formatStr)>, "Message must be convertible to std::string or std::string_view"); \
-            LifeExe::Log::getInstance().log(                                                                                      \
+            LifeExe::Log::GetInstance().log(                                                                                      \
                 categoryName, LifeExe::LogVerbosity::verbosity, std::format(formatStr __VA_OPT__(, ) __VA_ARGS__), showLocation); \
         }                                                                                                                         \
     } while (0)

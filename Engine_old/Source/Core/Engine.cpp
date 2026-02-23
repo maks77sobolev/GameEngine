@@ -2,7 +2,7 @@
 #include <format>
 #include "Log/Log.h"
 #include "Window/GLFW/GLFWWindowManager.h"
-#include <string>
+
 using namespace LifeExe;
 
 DEFINE_LOG_CATEGORY_STATIC(LogEngine);
@@ -37,11 +37,7 @@ void Engine::run()
         LE_LOG(LogEngine, Error, "Cannot run: LifeExe engine is not initialized...");
         return;
     }
-    WindowSettings settings;
-    settings.title = " hello from another window";;
-    auto window= m_windowManager->createWindow(settings);
-   std::string newTitle= std::format(" window id :{}", window.value().value);
-    m_windowManager->getWindowById(window.value())->setTitle(newTitle);
+
     while (!m_windowManager->areAllWindowsClosed())
     {
         m_windowManager->update();
