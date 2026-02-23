@@ -21,6 +21,10 @@ set(ENGINE_SOURCES
     Source/EngineConfig.h
     Source/Log/log.cpp
     Source/Log/log.h
+    Source/Window/GLFW/GLFWWindow.h
+    Source/Window/GLFW/GLFWWindow.cpp
+    Source/Window/GLFW/GLFWWindowManager.h
+    Source/Window/GLFW/GLFWWindowManager.cpp
 )
 
 add_library(${PROJECT_NAME}Lib ${ENGINE_SOURCES})
@@ -37,7 +41,9 @@ target_link_libraries(${PROJECT_NAME}TestRunner PRIVATE ${PROJECT_NAME}Lib gtest
 
 #add libs
 find_package(spdlog REQUIRED)
+find_package(glfw3 REQUIRED)
 target_link_libraries(${PROJECT_NAME}Lib PUBLIC spdlog::spdlog)
+target_link_libraries(${PROJECT_NAME}Lib PUBLIC glfw)
 # folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER Engine)
