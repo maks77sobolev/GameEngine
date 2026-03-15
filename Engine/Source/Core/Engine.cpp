@@ -1,17 +1,16 @@
 #include "Engine.h"
 #include <format>
 #include "Log/Log.h"
-#include "Window/GLFW/GLFWWindowManager.h"
-#include <string>
+#include "Window/IWindowManager.h"
+
 using namespace LifeExe;
 
 DEFINE_LOG_CATEGORY_STATIC(LogEngine);
 
-Engine::Engine()
+Engine::Engine(std::unique_ptr<IWindowManager> windowManager)  //
+    : m_windowManager(std::move(windowManager))
 {
     LE_LOG(LogEngine, Display, "Initializing Life Exe Engine, version: {}", version());
-
-    m_windowManager = std::make_unique<GLFWWindowManager>();
 
     const auto windowResult = m_windowManager->createWindow(WindowSettings{});
     if (!windowResult)
@@ -22,7 +21,7 @@ Engine::Engine()
 
     if (auto window = m_windowManager->getWindowById(windowResult.value()))
     {
-        window->setTitle(std::format("Life Exe Engine, version: {}", version()));
+        window->setTitle(std::format("Initializing Life Exe Engine, version: {}", version()));
     }
 
     m_initialized = true;
@@ -37,11 +36,7 @@ void Engine::run()
         LE_LOG(LogEngine, Error, "Cannot run: LifeExe engine is not initialized...");
         return;
     }
-    WindowSettings settings;
-    settings.title = " hello from another window";;
-    auto window= m_windowManager->createWindow(settings);
-   std::string newTitle= std::format(" window id :{}", window.value().value);
-    m_windowManager->getWindowById(window.value())->setTitle(newTitle);
+
     while (!m_windowManager->areAllWindowsClosed())
     {
         m_windowManager->update();
