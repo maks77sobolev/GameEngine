@@ -1,5 +1,5 @@
 #include "Core/Engine.h"
-#include "stdlib.h"
+#include <cstdlib>
 #include "Window/GLFW/GLFWWindowManager.h"
 using namespace LifeExe;
 int main()

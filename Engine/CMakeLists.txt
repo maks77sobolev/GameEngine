@@ -21,6 +21,8 @@ set(ENGINE_SOURCES
     Source/EngineConfig.h
     Source/Log/Log.cpp
     Source/Log/Log.h
+    Source/Window/IWindow.h
+    Source/Window/IWindowManager.h
     Source/Window/GLFW/GLFWWindow.h
     Source/Window/GLFW/GLFWWindow.cpp
     Source/Window/GLFW/GLFWWindowManager.h
@@ -29,6 +31,8 @@ set(ENGINE_SOURCES
     Source/Window/WinApi/WinApiWindow.cpp
     Source/Window/WinApi/WinApiWindowManager.h
     Source/Window/WinApi/WinApiWindowManager.cpp
+    Source/Event/event.h
+    Source/Event/InputEvent.h
 )
 
 add_library(${PROJECT_NAME}Lib ${ENGINE_SOURCES})
